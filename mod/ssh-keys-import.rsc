@@ -38,6 +38,11 @@
     $LogPrintExit2 warning $0 ("Creating directory 'tmpfs/ssh-keys-import' failed!") true;
   }
 
+  :if ([ $RequiredRouterOS $0 "7.11" ] = true) do={
+    :local FingerPrintMD5 [ :convert to=hex [ :convert transform=md5 [ :convert from=base64 ($KeyVal->1) ] ] ];
+    :set Key ($Key . ", md5=" . $FingerPrintMD5);
+  }
+
   :local FileName ("tmpfs/ssh-keys-import/key-" . [ $GetRandom20CharAlNum 6 ] . ".pub");
   /file/add name=$FileName contents=$Key;
   $WaitForFile $FileName;
